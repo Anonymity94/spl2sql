@@ -1,0 +1,25 @@
+{
+  "name": "splunk-spl-to-sql",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "node_modules/pegjs/bin/pegjs --format umd --export-var splToSqlConverter -o lib/splunk-spl-to-sql-converter.js lib/splunk.pegjs",
+    "test": "jest",
+    "prepublish": "npm run-script build && npm run test"
+  },
+  "repository": "git@github.com:Anonymity94/splunk-to-sql.git",
+  "author": "wangfucheng <wangfucheng@machloop.com>",
+  "keywords": [
+    "pegjs",
+    "splunk",
+    "parser",
+    "sql"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^26.0.4",
+    "chalk": "^4.1.0",
+    "jest": "^26.1.0",
+    "pegjs": "^0.10.0"
+  }
+}
