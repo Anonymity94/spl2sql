@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="./lib/splunk-spl-to-sql-converter.min.js"></script>
+  </head>
+  <body>
+    <textarea style="width: 400px;" id="input" rows="6"></textarea>
+
+    <p>
+      测试语句： source=table search a=1 and ( b= 2 or b =3 ) and a !=3 and a in
+      (1,"2",'3') and c not in (1) and d like "ces%_"
+    </p>
+
+    <div id="result"></div>
+    <div id="error"></div>
+    <script>
+      var textareaDom = document.getElementById("input");
+      var resultDom = document.getElementById("result");
+      var errorDom = document.getElementById("error");
+
+      textareaDom.addEventListener("input", function(e) {
+        var value = this.value || "";
+        try {
+          var result = splToSqlConverter.parse(value);
+          resultDom.innerText = JSON.stringify(result);
+          errorDom.innerText = "";
+        } catch (error) {
+          console.log(error);
+          resultDom.innerText = "";
+          errorDom.innerText = error.message;
+        }
+      });
+    </script>
+  </body>
+</html>
