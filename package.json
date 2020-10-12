@@ -1,9 +1,10 @@
 {
   "name": "splunk-spl-to-sql",
+  "description": "Convert SPL to SQL with pegjs",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "node_modules/pegjs/bin/pegjs --format globals --export-var splToSqlConverter -o lib/splunk-spl-to-sql-converter.js lib/splunk.pegjs && gulp",
+    "build": "node_modules/pegjs/bin/pegjs --format umd --export-var splToSqlConverter -o lib/converter.js lib/splunk.pegjs && gulp",
     "test": "jest",
     "prepublish": "npm run-script build && npm run test"
   },
@@ -23,6 +24,7 @@
     "chalk": "^4.1.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
+    "gulp-header": "^2.0.9",
     "gulp-rename": "^2.0.0",
     "gulp-uglify": "^3.0.2",
     "jest": "^26.1.0",
