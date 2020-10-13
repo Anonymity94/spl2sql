@@ -26,7 +26,8 @@
         var value = this.value || "";
         try {
           var result = splToSqlConverter.parse(value, {
-            applications: '{"1":"腾讯","2":"阿里"}'
+            applications: {"1":"腾讯","2":"阿里"},
+            json: false
           });
           resultDom.innerText = JSON.stringify(result);
           errorDom.innerText = "";

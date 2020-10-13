@@ -1,4 +1,4 @@
-var converter = require("./lib/splunk-spl-to-sql-converter");
+var converter = require("./lib/converter.min");
 
 module.exports = converter;
 
