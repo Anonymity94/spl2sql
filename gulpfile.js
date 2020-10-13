@@ -19,6 +19,14 @@ exports.default = function() {
     src("lib/converter.js")
       // es6 => es5
       .pipe(babel())
+      // 增加生成时间
+      .pipe(
+        header(banner, {
+          pkg,
+          buildTime: new Date().toISOString()
+        })
+      )
+      .pipe(dest("lib/"))
       // 压缩
       .pipe(
         uglify({

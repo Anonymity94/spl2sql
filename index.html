@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
-    <script src="./lib/a.min.js"></script>
+    <script src="./lib/converter.min.js"></script>
   </head>
   <body>
     <textarea style="width: 400px;" id="input" rows="6"></textarea>
@@ -25,7 +25,9 @@
       textareaDom.addEventListener("input", function(e) {
         var value = this.value || "";
         try {
-          var result = splToSqlConverter.parse(value);
+          var result = splToSqlConverter.parse(value, {
+            applications: '{"1":"腾讯","2":"阿里"}'
+          });
           resultDom.innerText = JSON.stringify(result);
           errorDom.innerText = "";
         } catch (error) {
