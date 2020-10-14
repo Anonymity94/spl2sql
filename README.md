@@ -10,7 +10,6 @@ try {
     applications: {"1":"腾讯","2":"阿里"},
     json: true // 结果以json形式返回
   });
-  // 完整的es搜索语句
   console.log(result)
 } catch (error) {
   console.log(error.message);
@@ -30,36 +29,161 @@ npm run test
 
 ## 语法说明
 
+```JSON
+source <tableName>
+# 搜索字段
+[[| search] <field-name> <operate> <field-value>] [<logical-connector> <field-name> <operate> <field-value>]]
 
-
+# 限制时间
+[| gentimes <time-field> start <time-value> [end <time-value>]]
+```
 
 ## 参数说明
+
+|         参数          |    名称    | 描述                                                         |
+| :-------------------: | :--------: | :----------------------------------------------------------- |
+|    `<field-name>`     |   字段名   | 允许输入大小字母、数字、下划线[`_`]、英文的点[`.`]<br />例如：`start_time`、`cup.usage` |
+|      `<operate>`      |   操作符   | `=`、`!=`、`>`、`>=`、`<`、`<=`、`IN`、`NOT IN`、`LIKE`<br />注意：不区分大小写 |
+|    `<field-value>`    |   字段值   | 允许输入大小字母、数字、下划线[`_`]、英文的点[`.`]、冒号[`:`]、正斜杠[`/`]、通配符[`*`]、通配符[`?`]。<br />允许内容被单引号[`''`]或双引号[`""`]包裹。<br />例如：`12`、`"1.2"`、`"中国"`、`"a_b"` |
+| `<logical-connector>` | 逻辑关系符 | `AND`、`OR`、`&&`、`||`<br />注意：不区分大小写              |
+|    `<time-field>`     | 时间字段名 | 同`<field-name>`                                             |
+|    `<time-value>`     | 时间内容值 | [时间范围](#时间范围)                                        |
 
 
 
 ## Demo
 
-### 查全部
-
-
-### 时间条件
-
 ### 字段条件
 
+⚠️ 开头的 `| search` 可省略
 
-#### ① 查询一个字段
+#### 操作符 `=`
+
+```json
+# 含义：字段a 等于 1.2.3.4
+source=table | search a = 1.2.3.4
+# 等价于
+source=table a = 1.2.3.4
+
+```
+
+#### 操作符 `!=`
+
+```json
+# 含义：字段b 不等于 1.2.3.4
+source=table b != 1.2.3.4
+```
+
+#### 操作符 `>`
+
+```json
+# 含义：字段c 大于 100
+source=table c > 100
+```
+
+#### 操作符 `>=`
+
+```json
+# 含义：字段c 大于等于 100
+source=table c >= 100
+```
+
+#### 操作符 `<`
+
+```json
+# 含义：字段d 小于 100
+source=table d < 200
+```
+
+#### 操作符 `<=`
+
+```json
+# 含义：字段d 小于等于 <200
+source=table c <= 200
+```
+
+#### 操作符 `IN`
+
+可用于搜索多个值
+
+```json
+# 含义：字段name=张三 或者 name=李四
+source=table name IN ("张三", "李四")
+
+# 等价于
+source=table name = "张三" OR name = "李四"
+```
+
+#### 操作符 `NOT IN`
+
+可用于排除多个值
+
+```json
+# 含义：字段name!=张三 并且 name!=李四
+source=table name NOT IN ("张三", "李四")
+
+# 等价于
+source=table name != "张三" AND name != "李四"
+```
+
+#### 操作符 `LIKE`
+
+可用于模糊查询，条件可以分为四种匹配模式
+
+① `％` 表示零个或任意多个字符
+
+```json
+# 以"山"开头的省份，例如：山东、山西
+source=table province LIKE "山%"
+
+# 以"东"结尾的省份，例如：山东、广东
+source=table province LIKE "%东"
+
+# 包含"马"名字，例如：马云、马化腾、司马光、
+source=table name LIKE "%马%"
+```
+
+② `_` 任意单个字符、匹配单个任意字符
+
+```json
+# 以 "C" 开头，然后是一个任意字符，然后是 "r，然后是任意字符，然后是 "er"：
+source=table name LIKE "C_r_er"
+```
+
+③ `[]` 表示括号内所列字符中的一个
+
+```json
+# 开头是"赵"或"钱"或"孙"
+# 这样可以匹配到 赵诗诗、钱诗诗、孙诗诗
+source=table name LIKE "[赵钱孙]诗诗"
+```
+
+④ `[^]` 表示不在括号所列之内的单个字符
+
+```json
+# 排除开头是"赵"或"钱"或"孙"。
+# 这样可以排除掉 赵诗诗、钱诗诗、孙诗诗
+source=table name LIKE "[赵钱孙]诗诗"
+```
 
 
-#### ② 使用逻辑关系表达式查询多个字段
+
+#### 操作符 `NOT LIKE`
+
+可用于排除字段。用法同操作符 `LIKE`
 
 
-#### ③ 模糊查询
+
+#### 使用逻辑关系表达式查询多个字段
+
+```
+source=table a=1 AND b>4
+source=table a=1 && (b=1 AND (c="2" OR c='3')) OR d!='2'
+source=table a=1 and b IN ('2','3','4') and c LIKE "%a_b%"
+source=table a=1 or b in ('2','3','4')
+```
 
 
-#### ④ 查询范围
-
-
-#### ⑤ 字段命中多个值
 
 
 ## 时间范围
@@ -71,7 +195,6 @@ npm run test
 `Splunk` 中的时间格式为：`| gentimes start=<timestamp> [end=<timestamp>] [increment=<increment>]` [Gentimes文档](https://docs.splunk.com/Documentation/Splunk/8.0.5/SearchReference/Gentimes)
 
 其中 `timestamp` 的格式为：`MM/DD/YYYY[:HH:MM:SS] | <int>`
-
 
 ---
 
@@ -101,16 +224,18 @@ npm run test
 
 - 绝对时间
 
-  - `2017-04-01T12:34:56+08`
-  - `2017-04-01T12:34:56+0800`
-  - `2017-04-01T12:34:56+08:00`
+  - `2017-10-14T12:34:56+08`
+  - `2017-10-14T12:34:56+0800`
+  - `2017-10-14T12:34:56+08:00`
+  - `2020-10-14 12:34:56`  没有时区时以当前时区为准
+  
   - 时间戳（毫秒）
 
 #### 使用Demo
 
-- `| gentimes time-field start=2020-07-13T00:00:00+08 end=2020-07-13T23:59:59+08`
-- `| gentimes start=now-7d end=now`
-- `| gentimes start=1594569600000 end=1594624363506`
+- `| gentimes <time-field> start=2020-07-13T00:00:00+08 end=2020-07-13T23:59:59+08`
+- `| gentimes <time-field> start=now-7d end=now`
+- `| gentimes <time-field> start=1594569600000 end=1594624363506`
 
 
 ## Links
