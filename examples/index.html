@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
-    <script src="./lib/converter.min.js"></script>
+    <script src="../lib/converter.min.js"></script>
   </head>
   <body>
     <textarea style="width: 400px;" id="input" rows="6"></textarea>
@@ -26,7 +26,7 @@
         var value = this.value || "";
         try {
           var result = splToSqlConverter.parse(value, {
-            applications: {"1":"腾讯","2":"阿里"},
+            applications: {"81":"HTTP","82":"HTTPS"},
             json: true
           });
           resultDom.innerText = JSON.stringify(result);
