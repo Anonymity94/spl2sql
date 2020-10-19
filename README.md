@@ -24,6 +24,81 @@ yarn
 npm run test
 ```
 
+
+
+##  字段带类型时的转换逻辑
+
+### IPv4
+
+> [toIPv4(string)](https://clickhouse.tech/docs/en/sql-reference/functions/ip-address-functions/#toipv4string)
+
+```json
+# 输入
+ipv4_field<IPv4> = 1.1.1.1
+
+# 输出
+ sql: `ipv4_field` = toIPv4(:paramId)
+ params:  {paramId: '1.1.1.1'}
+```
+
+### IPv6
+
+> [toIPv6(string)](https://clickhouse.tech/docs/en/sql-reference/functions/ip-address-functions/#toipv6string)
+
+```json
+# 输入
+ipv6_field<IPv6> = 8090::4
+
+# 输出
+ sql: `ipv6_field` = toIPv6(:paramId)
+ params: {paramId: '8090::4'}
+```
+
+
+
+### Array
+
+> [has(arr, elem)](https://clickhouse.tech/docs/en/sql-reference/functions/array-functions/#hasarr-elem)
+
+```json
+# 输入
+array_fieid<Array> = '测试'
+
+# 输出
+sql: has(`array_fieid`, :paramId) = 1
+params: {paramId: '测试'}
+```
+
+
+
+### Array<IPv4>
+
+```json
+# 输入
+ipv4_array_fieid<Array<IPv4>> = '1.1.1.1'
+
+# 输出
+sql: has(`ipv4_array_fieid`, toIPv4(:paramId)) = 1
+params: {paramId: '测试'}
+```
+
+
+
+### Array<IPv6>
+
+```json
+# 输入
+ipv4_array_fieid<Array<IPv6>> = '1.1.1.1'
+
+# 输出
+sql: has(`ipv4_array_fieid`, toIPv6(:paramId)) = 1
+params: {paramId: '测试'}
+```
+
+
+
+
+
 ## 一个完整的搜索
 
 
@@ -44,7 +119,7 @@ source <tableName>
 | :-------------------: | :--------: | :----------------------------------------------------------- |
 |    `<field-name>`     |   字段名   | 允许输入大小字母、数字、下划线[`_`]、英文的点[`.`]<br />例如：`start_time`、`cup.usage` |
 |      `<operate>`      |   操作符   | `=`、`!=`、`>`、`>=`、`<`、`<=`、`IN`、`NOT IN`、`LIKE`、`NOT LIKE`<br />注意：不区分大小写 |
-|    `<field-value>`    |   字段值   | 允许输入大小字母、数字、下划线[`_`]、英文的点[`.`]、冒号[`:`]、正斜杠[`/`]、通配符[`*`]、通配符[`?`]。<br />允许内容被单引号[`''`]或双引号[`""`]包裹。<br />例如：`12`、`"1.2"`、`"中国"`、`"a_b"` |
+|    `<field-value>`    |   字段值   | 允许输入大小字母、数字、下划线[`_`]、英文的点[`.`]、冒号[`:`]、正斜杠[`/`]、通配符[`%`]、通配符[`_`]。<br />允许内容被单引号[`''`]或双引号[`""`]包裹。<br />例如：`12`、`"1.2"`、`"中国"`、`"a_b"` |
 | `<logical-connector>` | 逻辑关系符 | `AND`、`OR`、`&&`、`||`<br />注意：不区分大小写              |
 |    `<time-field>`     | 时间字段名 | 同`<field-name>`                                             |
 |    `<time-value>`     | 时间内容值 | [时间范围](#时间范围)                                        |
