@@ -23,13 +23,20 @@ declare namespace SplToSqlConverter {
       };
       dev: {
         expression: {
-          [propsName: IExpressionKey]: string;
+          WHERE: string;
+          ORDER_BY: string;
+          LIMIT: string;
+          GENTIMES: {
+            time_field: string;
+            time_from: number;
+            time_to: number;
+          };
+          COLUMNS: string;
         };
         fields: string[];
       };
     };
   }
 
-  type IExpressionKey = "WHERE" | "ORDER_BY" | "LIMIT" | "GENTIMES" | "COLUMNS";
   function parse(spl: string, options?: IParseOptions): IParseResult;
 }
