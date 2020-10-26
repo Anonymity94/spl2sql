@@ -16,4 +16,20 @@ describe("Splunk SPL to SQL test", () => {
       }
     });
   });
+
+  const spl2 = "source=sourceName | search age=30";
+  test(spl2, () => {
+    const dsl2 = converter.parse(spl2, { json: true });
+    expect(dsl2).toStrictEqual({
+      result: {
+        source: "source=sourceName | search age=30",
+        target: "`age`=:param_1_27_1_33",
+        params: { param_1_27_1_33: "30" },
+        dev: {
+          expression: { WHERE: "`age`=:param_1_27_1_33" },
+          fields: ["age"]
+        }
+      }
+    });
+  });
 });
