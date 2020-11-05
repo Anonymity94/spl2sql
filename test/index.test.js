@@ -7,10 +7,10 @@ describe("Splunk SPL to SQL test", () => {
     expect(dsl1).toStrictEqual({
       result: {
         source: "| search age=30",
-        target: "`age`=:param_1_9_1_15",
+        target: "(`age`=:param_1_9_1_15)",
         params: { param_1_9_1_15: "30" },
         dev: {
-          expression: { WHERE: "`age`=:param_1_9_1_15" },
+          expression: { WHERE: "(`age`=:param_1_9_1_15)" },
           fields: ["age"]
         }
       }
@@ -23,10 +23,10 @@ describe("Splunk SPL to SQL test", () => {
     expect(dsl2).toStrictEqual({
       result: {
         source: "source=sourceName | search age=30",
-        target: "`age`=:param_1_27_1_33",
+        target: "(`age`=:param_1_27_1_33)",
         params: { param_1_27_1_33: "30" },
         dev: {
-          expression: { WHERE: "`age`=:param_1_27_1_33" },
+          expression: { WHERE: "(`age`=:param_1_27_1_33)" },
           fields: ["age"]
         }
       }
