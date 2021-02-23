@@ -1,4 +1,4 @@
-# Splunk-SPL-to-SQL
+# Splunk-SPL-to-ClickHouse-SQL
 
 ## Usage
 
