@@ -4,31 +4,65 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
+    <title>Splunk SPL to ClickHouse SQL</title>
+    <link
+      href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.0.4/markdown-it.min.js"></script>
     <script src="../lib/converter.min.js"></script>
   </head>
   <body>
-    <textarea style="width: 400px;" id="input" rows="6"></textarea>
+    <div class="container-fluid">
+      <h2 style="text-align: center; margin-top: 20px">
+        Splunk SPL to ClickHouse SQL
+      </h2>
+      <div class="card">
+        <h5 class="card-header">Play</h5>
+        <div class="card-body">
+          <!-- TODO: -->
+          <div class="row">
+            <div class="col-6">
+              <textarea
+                class="form-control"
+                style="width: 100%; height: 200px"
+                id="input"
+                placeholder="请输入SPL"
+              ></textarea>
+            </div>
+            <div class="col-6">
+              <div class="card" style="height: 200px">
+                <div class="card-body">
+                  <code id="result"></code>
+                  <div id="error"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <p>
-      测试语句： |search a=1 and ( b= 2 or b =3 ) and a !=3 and a in
-      (1,"2",'3') and c not in (1) and d like "ces%_"
-    </p>
-
-    <div id="result"></div>
-    <div id="error"></div>
+      <div class="card" style="margin-top: 20px">
+        <h5 class="card-header">Readme</h5>
+        <div class="card-body" id="readme"></div>
+      </div>
+    </div>
     <script>
       var textareaDom = document.getElementById("input");
       var resultDom = document.getElementById("result");
       var errorDom = document.getElementById("error");
+      var readmeDom = document.getElementById("readme");
+      var md = window.markdownit();
 
-      textareaDom.addEventListener("input", function(e) {
+      fetch("../README.md").then(async function (response) {
+        const res = await response.text();
+        readmeDom.innerHTML = md.render(res);
+      });
+
+      textareaDom.addEventListener("input", function (e) {
         var value = this.value || "";
         try {
-          var result = splToSqlConverter.parse(value, {
-            applications: {"81":"HTTP","82":"HTTPS"},
-            json: true
-          });
+          var result = splToSqlConverter.parse(value);
           resultDom.innerText = JSON.stringify(result);
           errorDom.innerText = "";
         } catch (error) {
