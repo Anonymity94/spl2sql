@@ -1,7 +1,7 @@
 {
   "name": "splunk-spl-to-sql",
-  "description": "Convert SPL to SQL with pegjs",
-  "version": "1.6.9",
+  "description": "Convert Splunk SPL to ClickHouse SQL with pegjs",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {
     "build": "node_modules/pegjs/bin/pegjs --format umd --export-var splToSqlConverter -o lib/converter.js lib/splunk.pegjs && gulp && npm run test",
@@ -9,7 +9,7 @@
     "prepublish": "npm run-script build && npm run test"
   },
   "repository": "git@github.com:Anonymity94/splunk-to-sql.git",
-  "author": "wangfucheng <wangfucheng@machloop.com>",
+  "author": "Anonymit94 <1176989591@qq.com>",
   "keywords": [
     "pegjs",
     "splunk",
