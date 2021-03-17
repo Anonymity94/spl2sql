@@ -7,7 +7,7 @@
 ## 使用
 
 ```js
-const converter = require("splunk-to-sql");
+const converter = require("../lib/converter");
 
 try {
   const result = converter.parse(`search a=1 and b=2`, {
@@ -17,6 +17,20 @@ try {
 } catch (error) {
   console.log(error.message);
 }
+```
+
+```html
+<script src="../lib/converter.min.js"></script>
+
+<script>
+  try {
+    var result = splToSqlConverter.parse(value, {
+      json: true,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+</script>
 ```
 
 ## 测试
@@ -31,7 +45,6 @@ yarn test
 ```sh
 yarn build
 ```
-
 
 ## 一个完整的搜索
 
@@ -73,14 +86,14 @@ ipv4_initiator<IPv4> = '1.1.1.1' AND (province = '北京' OR province = '山东'
 
 ## 参数说明
 
-|         参数          |    名称    | 描述                                                         |
-| :-------------------: | :--------: | :----------------------------------------------------------- |
-|    `<field-name>`     |   字段名   | 允许输入大小字母、数字、下划线`_`、英文的点`.`<br />例如：`start_time`、`cup.usage` |
-|      `<operate>`      |   操作符   | `=`、`!=`、`>`、`>=`、`<`、`<=`、`IN`、`NOT IN`、`LIKE`、`NOT LIKE`、`EXISTS`、`NOT_EXISTS`<br />注意：不区分大小写 |
+|         参数          |    名称    | 描述                                                                                                                     |
+| :-------------------: | :--------: | :----------------------------------------------------------------------------------------------------------------------- | --- | ------------------------- |
+|    `<field-name>`     |   字段名   | 允许输入大小字母、数字、下划线`_`、英文的点`.`<br />例如：`start_time`、`cup.usage`                                      |
+|      `<operate>`      |   操作符   | `=`、`!=`、`>`、`>=`、`<`、`<=`、`IN`、`NOT IN`、`LIKE`、`NOT LIKE`、`EXISTS`、`NOT_EXISTS`<br />注意：不区分大小写      |
 |    `<field-value>`    |   字段值   | 无特殊限制，允许内容被单引号`''`或双引号`""`包裹，但是引号内不允许出现引号。<br />例如：`12`、`"1.2"`、`"中国"`、`"a_b"` |
-| `<logical-connector>` | 逻辑关系符 | `AND`、`OR`、`&&`、`||`<br />注意：不区分大小写              |
-|    `<time-field>`     | 时间字段名 | 同`<field-name>`                                             |
-|    `<time-value>`     | 时间内容值 | [时间范围](#时间范围)<br/>绝对时间值请用单引号或双引号包裹            |
+| `<logical-connector>` | 逻辑关系符 | `AND`、`OR`、`&&`、`                                                                                                     |     | `<br />注意：不区分大小写 |
+|    `<time-field>`     | 时间字段名 | 同`<field-name>`                                                                                                         |
+|    `<time-value>`     | 时间内容值 | [时间范围](#时间范围)<br/>绝对时间值请用单引号或双引号包裹                                                               |
 
 ## 字段带类型时的转换逻辑
 
@@ -99,7 +112,6 @@ ipv4_field<IPv4> = 1.1.1.1
 ```json
 ipv4_cidr_field<IPv4> = 1.1.1.1/10
 ```
-
 
 ### IPv6
 
@@ -271,7 +283,6 @@ a=1 and b IN ('2','3','4') and c LIKE "%a_b%"
 a=1 or b in ('2','3','4')
 ```
 
-
 #### 字段排序
 
 ```
@@ -290,7 +301,6 @@ a=1 or b in ('2','3','4')
 ```
 | fields +name,+age
 ```
-
 
 针对时间格式做处理一些调整，这里的时间格式和`Splunk`中标准的时间格式不同。
 
