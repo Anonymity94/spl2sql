@@ -1,76 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Splunk SPL to ClickHouse SQL</title>
-    <link
-      href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.0.4/markdown-it.min.js"></script>
-    <script src="../lib/converter.min.js"></script>
-  </head>
-  <body>
-    <div class="container-fluid">
-      <h2 style="text-align: center; margin-top: 20px">
-        Splunk SPL to ClickHouse SQL
-      </h2>
-      <div class="card">
-        <h5 class="card-header">Play</h5>
-        <div class="card-body">
-          <!-- TODO: -->
-          <div class="row">
-            <div class="col-6">
-              <textarea
-                class="form-control"
-                style="width: 100%; height: 200px"
-                id="input"
-                placeholder="请输入SPL"
-              ></textarea>
-            </div>
-            <div class="col-6">
-              <div class="card" style="height: 200px">
-                <div class="card-body">
-                  <code id="result"></code>
-                  <div id="error"></div>
-                </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Splunk SPL to ClickHouse SQL</title>
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.bootcdn.net/ajax/libs/github-markdown-css/4.0.0/github-markdown.min.css" rel="stylesheet">
+  <script src="https://cdn.bootcdn.net/ajax/libs/markdown-it/12.0.3/markdown-it.min.js"></script>
+  <script src="../lib/converter.min.js"></script>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <h2 style="text-align: center; margin-top: 20px">
+      Splunk SPL to ClickHouse SQL
+    </h2>
+    <div class="card">
+      <h5 class="card-header">Playground</h5>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-6">
+            <textarea class="form-control" style="width: 100%; height: 300px" id="input" autofocus
+              placeholder="请输入SPL"></textarea>
+          </div>
+          <div class="col-6">
+            <div class="card" style="height: 300px">
+              <div class="card-body markdown-body" style="padding: 0;">
+                <pre id="result" style="height: 100%;"># 转换结果</pre>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="card" style="margin-top: 20px">
-        <h5 class="card-header">Readme</h5>
-        <div class="card-body" id="readme"></div>
-      </div>
     </div>
-    <script>
-      var textareaDom = document.getElementById("input");
-      var resultDom = document.getElementById("result");
-      var errorDom = document.getElementById("error");
-      var readmeDom = document.getElementById("readme");
-      var md = window.markdownit();
 
-      fetch("../README.md").then(async function (response) {
-        const res = await response.text();
-        readmeDom.innerHTML = md.render(res);
-      });
+    <div class="card" style="margin-top: 20px">
+      <h5 class="card-header">README</h5>
+      <div class="card-body markdown-body" id="readme"></div>
+    </div>
+  </div>
+  <script>
+    const textareaDom = document.getElementById("input");
+    const resultDom = document.getElementById("result");
+    const readmeDom = document.getElementById("readme");
 
-      textareaDom.addEventListener("input", function (e) {
-        var value = this.value || "";
-        try {
-          var result = splToSqlConverter.parse(value);
-          resultDom.innerText = JSON.stringify(result);
-          errorDom.innerText = "";
-        } catch (error) {
-          console.log(error);
-          resultDom.innerText = "";
-          errorDom.innerText = error.message;
-        }
-      });
-    </script>
-  </body>
+    const md = window.markdownit();
+
+    fetch("../README.md").then(async function (response) {
+      const res = await response.text();
+      readmeDom.innerHTML = md.render(res);
+    });
+
+    textareaDom.addEventListener("input", function (e) {
+      const value = this.value || "";
+      try {
+        const result = splToSqlConverter.parse(value);
+        resultDom.innerText = JSON.stringify(result, null, 2);
+      } catch (error) {
+        console.log(error);
+        resultDom.innerText = error.message;
+      }
+    });
+  </script>
+</body>
+
 </html>

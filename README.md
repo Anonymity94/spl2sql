@@ -2,7 +2,7 @@
 
 一个将 `Splunk SPL` 转化成 `ClickHouse SQL` 的转换器，并做了一些拓展。
 
-可以用来做自定义 `Filter` 过滤查询。
+可以用来做自定义过滤查询。
 
 ## 使用
 
@@ -33,18 +33,19 @@ try {
 </script>
 ```
 
-## 测试
+## 开发
 
 ```sh
+# install package
 yarn
+
+# build
+yarn build
+
+# test
 yarn test
 ```
 
-## 构建
-
-```sh
-yarn build
-```
 
 ## 一个完整的搜索
 
