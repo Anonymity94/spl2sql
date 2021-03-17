@@ -87,11 +87,11 @@ ipv4_initiator<IPv4> = '1.1.1.1' AND (province = '北京' OR province = '山东'
 ## 参数说明
 
 |         参数          |    名称    | 描述                                                                                                                     |
-| :-------------------: | :--------: | :----------------------------------------------------------------------------------------------------------------------- | --- | ------------------------- |
+| :-------------------: | :--------: | :----------------------------------------------------------------------------------------------------------------------- |
 |    `<field-name>`     |   字段名   | 允许输入大小字母、数字、下划线`_`、英文的点`.`<br />例如：`start_time`、`cup.usage`                                      |
 |      `<operate>`      |   操作符   | `=`、`!=`、`>`、`>=`、`<`、`<=`、`IN`、`NOT IN`、`LIKE`、`NOT LIKE`、`EXISTS`、`NOT_EXISTS`<br />注意：不区分大小写      |
 |    `<field-value>`    |   字段值   | 无特殊限制，允许内容被单引号`''`或双引号`""`包裹，但是引号内不允许出现引号。<br />例如：`12`、`"1.2"`、`"中国"`、`"a_b"` |
-| `<logical-connector>` | 逻辑关系符 | `AND`、`OR`、`&&`、`                                                                                                     |     | `<br />注意：不区分大小写 |
+| `<logical-connector>` | 逻辑关系符 | `AND`、`OR`、`&&`<br />注意：不区分大小写                                                                                |
 |    `<time-field>`     | 时间字段名 | 同`<field-name>`                                                                                                         |
 |    `<time-value>`     | 时间内容值 | [时间范围](#时间范围)<br/>绝对时间值请用单引号或双引号包裹                                                               |
 
@@ -107,7 +107,7 @@ ipv4_field<IPv4> = 1.1.1.1
 
 支持 `CIDR` 格式
 
-> https://clickhouse.tech/docs/en/sql-reference/functions/ip-address-functions/#ipv4cidrtorangeipv4-cidr
+> [ipv4cidrtorangeipv4-cidr](https://clickhouse.tech/docs/en/sql-reference/functions/ip-address-functions/#ipv4cidrtorangeipv4-cidr)
 
 ```json
 ipv4_cidr_field<IPv4> = 1.1.1.1/10
@@ -123,7 +123,7 @@ ipv6_field<IPv6> = 8090::4
 
 支持 `CIDR` 格式
 
-> https://clickhouse.tech/docs/en/sql-reference/functions/ip-address-functions/#ipv4cidrtorangeipv4-cidr
+> [ipv4cidrtorangeipv4-cidr](https://clickhouse.tech/docs/en/sql-reference/functions/ip-address-functions/#ipv4cidrtorangeipv4-cidr)
 
 ```json
 ipv6_cidr_field<IPv6> = 8090::4/10
