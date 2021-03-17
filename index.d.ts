@@ -1,10 +1,12 @@
 export = SplToSqlConverter;
-export as namespace converter;
+export as namespace SplToSqlConverter;
 
 declare namespace SplToSqlConverter {
   interface IParseOptions {
     /**
      * 结果是否返回json
+     * 
+     * 默认为 true
      */
     json?: boolean;
   }
