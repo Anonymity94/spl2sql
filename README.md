@@ -10,7 +10,7 @@
 const converter = require("../lib/converter");
 
 try {
-  const result = converter.parse(`search a=1 and b=2`, {
+  const result = converter.parse(`| search a=1 and b=2`, {
     json: true, // 结果以json形式返回
   });
   console.log(result);
