@@ -255,6 +255,8 @@ name LIKE "C_r_er"
 
 #### 操作符 `EXISTS`
 
+**⚠️ 因 `empty()` 仅适用于 `String` 和`Array` 类型，所以需要格外注意使用场景**
+
 > [string-functions/#empty](https://clickhouse.tech/docs/en/sql-reference/functions/string-functions/#empty)
 
 排除 `''` 或 `NULL` 或 `[]` ，其他的都会被命中。
@@ -265,6 +267,8 @@ name EXISTS
 ```
 
 #### 操作符 `NOT_EXISTS`
+
+**⚠️ 因 `NOT empty()` 仅适用于 `String` 和`Array` 类型，所以需要格外注意使用场景**
 
 > [string-functions/#notempty](https://clickhouse.tech/docs/en/sql-reference/functions/string-functions/#notempty)
 
