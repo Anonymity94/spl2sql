@@ -6,9 +6,21 @@ declare namespace SplToSqlConverter {
     /**
      * 结果是否返回json
      * 
-     * 默认为 true
+     * 默认为 false
      */
     json?: boolean;
+    /**
+     * 是否根据开始时间推算流的老化时间
+     * 默认为 true
+     */
+    hasAgingTime?: boolean;
+    /**
+     * 时间精度
+     * 默认为9
+     * @value 3（毫秒）
+     * @value 9（纳秒）
+     */
+    timePrecision: 3 | 9
   }
   interface IParseResult {
     result: {
