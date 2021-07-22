@@ -4,7 +4,9 @@ const converter = require("../index");
 describe("Splunk SPL to ClickHouse SQL test", () => {
   const spl0 = `ipv4_initiator<IPv4> = '1.1.1.1' AND (province = '北京' OR province = '山东') | gentimes start_time start="2020-07-13T00:00:00+08" end="2020-07-13T23:59:59+08" | head 1000 | sort -start_time`;
   test(spl0, () => {
-    expect(converter.parse(spl0, { json: true })).toStrictEqual({
+    expect(
+      converter.parse(spl0, { json: true, hasAgingTime: false })
+    ).toStrictEqual({
       result: {
         source:
           "ipv4_initiator<IPv4> = '1.1.1.1' AND (province = '北京' OR province = '山东') | gentimes start_time start=\"2020-07-13T00:00:00+08\" end=\"2020-07-13T23:59:59+08\" | head 1000 | sort -start_time",
@@ -464,7 +466,9 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
 
   const spl23 = `| gentimes start_time start="2020-07-13T00:00:00+08" end="2020-07-13T23:59:59+08"`;
   test(spl23, () => {
-    expect(converter.parse(spl23, { json: true })).toStrictEqual({
+    expect(
+      converter.parse(spl23, { json: true, hasAgingTime: false })
+    ).toStrictEqual({
       result: {
         source:
           '| gentimes start_time start="2020-07-13T00:00:00+08" end="2020-07-13T23:59:59+08"',
@@ -492,7 +496,9 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
 
   const spl24 = `| gentimes start_time start="2020-07-13T00:00:00+08" end="2020-07-13T23:59:59+08"`;
   test(spl24, () => {
-    expect(converter.parse(spl24, { json: true })).toStrictEqual({
+    expect(
+      converter.parse(spl24, { json: true, hasAgingTime: false })
+    ).toStrictEqual({
       result: {
         source:
           '| gentimes start_time start="2020-07-13T00:00:00+08" end="2020-07-13T23:59:59+08"',
@@ -520,7 +526,9 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
 
   const spl25 = `| gentimes start_time start=1594569600000 end=1594624363506`;
   test(spl25, () => {
-    expect(converter.parse(spl25, { json: true })).toStrictEqual({
+    expect(
+      converter.parse(spl25, { json: true, hasAgingTime: false })
+    ).toStrictEqual({
       result: {
         source: "| gentimes start_time start=1594569600000 end=1594624363506",
         target:
@@ -547,7 +555,9 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
 
   const spl26 = `| sort -create_time, +age`;
   test(spl26, () => {
-    expect(converter.parse(spl26, { json: true })).toStrictEqual({
+    expect(
+      converter.parse(spl26, { json: true, hasAgingTime: false })
+    ).toStrictEqual({
       result: {
         source: "| sort -create_time, +age",
         target: " ORDER BY create_time DESC,age ASC",
