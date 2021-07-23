@@ -5,7 +5,7 @@ declare namespace SplToSqlConverter {
   interface IParseOptions {
     /**
      * 结果是否返回json
-     * 
+     *
      * 默认为 false
      */
     json?: boolean;
@@ -20,7 +20,7 @@ declare namespace SplToSqlConverter {
      * @value 3（毫秒）
      * @value 9（纳秒）
      */
-    timePrecision: 3 | 9
+    timePrecision: 3 | 9;
   }
   interface IParseResult {
     result: {
@@ -67,10 +67,23 @@ declare namespace SplToSqlConverter {
         };
         /**
          * SPL中包含的查询字段
-         * 
+         *
          * @description: 可以用来做字段合规性检验
          */
         fields: string[];
+
+        fieldCollection: {
+          field: string;
+          fieldType:
+            | "IPv4"
+            | "IPv6"
+            | "CIDR_IPv4"
+            | "CIDR_IPv6"
+            | "Array<IPv4>"
+            | "Array<IPv6>";
+          operator: "like" | "not_like" | "=" | "!=" | ">" | ">=" | "<" | "<=";
+          operand: string | number;
+        }[];
       };
     };
   }
