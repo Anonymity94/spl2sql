@@ -5,24 +5,25 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
   const spl0 = `ipv4_initiator<IPv4> = '1.1.1.1' AND (province = '北京' OR province = '山东') | gentimes start_time start="2020-07-13T00:00:00+08" end="2020-07-13T23:59:59+08" | head 1000 | sort -start_time`;
   test(spl0, () => {
     expect(
-      converter.parse(spl0, { json: true, hasAgingTime: false })
+      converter.parse(spl0, { json: true, hasAgingTime: true })
     ).toStrictEqual({
       result: {
         source:
           "ipv4_initiator<IPv4> = '1.1.1.1' AND (province = '北京' OR province = '山东') | gentimes start_time start=\"2020-07-13T00:00:00+08\" end=\"2020-07-13T23:59:59+08\" | head 1000 | sort -start_time",
         target:
-          "(`ipv4_initiator`=toIPv4(:param_1_0_1_32) AND (`province`=:param_1_38_1_53 OR `province`=:param_1_57_1_72)) AND (`start_time`>= toDateTime64(:param_start_time, 9, 'UTC') AND `start_time` <= toDateTime64(:param_end_time, 9, 'UTC')) ORDER BY start_time DESC LIMIT 0,1000",
+          "(`ipv4_initiator`=toIPv4(:param_1_0_1_32) AND (`province`=:param_1_38_1_53 OR `province`=:param_1_57_1_72)) AND ( start_time >= toDateTime64(:param_aging_start_time, 9, 'UTC')  and start_time < toDateTime64(:param_end_time, 9, 'UTC')  and end_time >= toDateTime64(:param_start_time, 9, 'UTC') ) ORDER BY start_time DESC LIMIT 0,1000",
         params: {
           param_1_0_1_32: "1.1.1.1",
           param_1_38_1_53: "北京",
           param_1_57_1_72: "山东",
+          param_aging_start_time: "2020-07-12 14:00:00",
           param_start_time: "2020-07-12 16:00:00",
           param_end_time: "2020-07-13 15:59:59",
         },
         dev: {
           expression: {
             WHERE:
-              "(`ipv4_initiator`=toIPv4(:param_1_0_1_32) AND (`province`=:param_1_38_1_53 OR `province`=:param_1_57_1_72)) AND (`start_time`>= toDateTime64(:param_start_time, 9, 'UTC') AND `start_time` <= toDateTime64(:param_end_time, 9, 'UTC'))",
+              "(`ipv4_initiator`=toIPv4(:param_1_0_1_32) AND (`province`=:param_1_38_1_53 OR `province`=:param_1_57_1_72)) AND ( start_time >= toDateTime64(:param_aging_start_time, 9, 'UTC')  and start_time < toDateTime64(:param_end_time, 9, 'UTC')  and end_time >= toDateTime64(:param_start_time, 9, 'UTC') )",
             GENTIMES: {
               time_field: "start_time",
               time_from: 1594569600000,
@@ -32,6 +33,26 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             ORDER_BY: "ORDER BY start_time DESC",
           },
           fields: ["ipv4_initiator<IPv4>", "province", "start_time"],
+          fieldCollection: [
+            {
+              field: "ipv4_initiator",
+              fieldType: "IPv4",
+              operator: "=",
+              operand: "1.1.1.1",
+            },
+            {
+              field: "province",
+              fieldType: "",
+              operator: "=",
+              operand: "北京",
+            },
+            {
+              field: "province",
+              fieldType: "",
+              operator: "=",
+              operand: "山东",
+            },
+          ],
         },
       },
     });
@@ -44,10 +65,22 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
       result: {
         source: "| search age=30",
         target: "(`age`=:param_1_9_1_15)",
-        params: { param_1_9_1_15: "30" },
+        params: {
+          param_1_9_1_15: "30",
+        },
         dev: {
-          expression: { WHERE: "(`age`=:param_1_9_1_15)" },
+          expression: {
+            WHERE: "(`age`=:param_1_9_1_15)",
+          },
           fields: ["age"],
+          fieldCollection: [
+            {
+              field: "age",
+              fieldType: "",
+              operator: "=",
+              operand: "30",
+            },
+          ],
         },
       },
     });
@@ -60,10 +93,22 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
       result: {
         source: "source=sourceName | search age=30",
         target: "(`age`=:param_1_27_1_33)",
-        params: { param_1_27_1_33: "30" },
+        params: {
+          param_1_27_1_33: "30",
+        },
         dev: {
-          expression: { WHERE: "(`age`=:param_1_27_1_33)" },
+          expression: {
+            WHERE: "(`age`=:param_1_27_1_33)",
+          },
           fields: ["age"],
+          fieldCollection: [
+            {
+              field: "age",
+              fieldType: "",
+              operator: "=",
+              operand: "30",
+            },
+          ],
         },
       },
     });
@@ -84,6 +129,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(`ipv4_field`=toIPv4(:param_1_0_1_26))",
           },
           fields: ["ipv4_field<IPv4>"],
+          fieldCollection: [
+            {
+              field: "ipv4_field",
+              fieldType: "IPv4",
+              operator: "=",
+              operand: "1.1.1.1",
+            },
+          ],
         },
       },
     });
@@ -107,6 +160,45 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
               "(ipv4_cidr_field  between IPv4CIDRToRange(toIPv4(:param_1_0_1_34_ip), :param_1_0_1_34_mask).1 and IPv4CIDRToRange(toIPv4(:param_1_0_1_34_ip), :param_1_0_1_34_mask).2)",
           },
           fields: ["ipv4_cidr_field<IPv4>"],
+          fieldCollection: [
+            {
+              field: "ipv4_cidr_field",
+              fieldType: "CIDR_IPv4",
+              operator: "=",
+              operand: "1.1.1.1/10",
+            },
+          ],
+        },
+      },
+    });
+  });
+
+  const spl4_1 = "ipv4_cidr_field<IPv4> != 1.1.1.1/10";
+  test(spl4_1, () => {
+    const dsl4_1 = converter.parse(spl4_1, { json: true });
+    expect(dsl4_1).toStrictEqual({
+      result: {
+        source: "ipv4_cidr_field<IPv4> != 1.1.1.1/10",
+        target:
+          "(((ipv4_cidr_field NOT between IPv4CIDRToRange(toIPv4(:param_1_0_1_35_ip), :param_1_0_1_35_mask).1 and IPv4CIDRToRange(toIPv4(:param_1_0_1_35_ip), :param_1_0_1_35_mask).2) or isNull(ipv4_cidr_field)))",
+        params: {
+          param_1_0_1_35_ip: "1.1.1.1",
+          param_1_0_1_35_mask: 10,
+        },
+        dev: {
+          expression: {
+            WHERE:
+              "(((ipv4_cidr_field NOT between IPv4CIDRToRange(toIPv4(:param_1_0_1_35_ip), :param_1_0_1_35_mask).1 and IPv4CIDRToRange(toIPv4(:param_1_0_1_35_ip), :param_1_0_1_35_mask).2) or isNull(ipv4_cidr_field)))",
+          },
+          fields: ["ipv4_cidr_field<IPv4>"],
+          fieldCollection: [
+            {
+              field: "ipv4_cidr_field",
+              fieldType: "CIDR_IPv4",
+              operator: "!=",
+              operand: "1.1.1.1/10",
+            },
+          ],
         },
       },
     });
@@ -130,6 +222,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
               "(ipv6_cidr_field  between IPv6CIDRToRange(toIPv6(:param_1_0_1_34_ip), :param_1_0_1_34_mask).1 and IPv6CIDRToRange(toIPv6(:param_1_0_1_34_ip), :param_1_0_1_34_mask).2)",
           },
           fields: ["ipv6_cidr_field<IPv6>"],
+          fieldCollection: [
+            {
+              field: "ipv6_cidr_field",
+              fieldType: "CIDR_IPv6",
+              operator: "=",
+              operand: "8090::4/10",
+            },
+          ],
         },
       },
     });
@@ -149,6 +249,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "( has(array_fieid, :param_1_0_1_25)=1)",
           },
           fields: ["array_fieid<Array>"],
+          fieldCollection: [
+            {
+              field: "array_fieid",
+              fieldType: "Array",
+              operator: "=",
+              operand: "测试",
+            },
+          ],
         },
       },
     });
@@ -168,6 +276,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "( has(ipv4_array_fieid, toIPv4(:param_1_0_1_41))=1)",
           },
           fields: ["ipv4_array_fieid<Array<IPv4>>"],
+          fieldCollection: [
+            {
+              field: "ipv4_array_fieid",
+              fieldType: "Array<IPv4>",
+              operator: "=",
+              operand: "1.1.1.1",
+            },
+          ],
         },
       },
     });
@@ -187,6 +303,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "( has(ipv6_array_fieid, toIPv6(:param_1_0_1_41))=1)",
           },
           fields: ["ipv6_array_fieid<Array<IPv6>>"],
+          fieldCollection: [
+            {
+              field: "ipv6_array_fieid",
+              fieldType: "Array<IPv6>",
+              operator: "=",
+              operand: "8090::4",
+            },
+          ],
         },
       },
     });
@@ -197,15 +321,23 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
     expect(converter.parse(spl9, { json: true })).toStrictEqual({
       result: {
         source: "name != '张三'",
-        target: "(`name`!=:param_1_0_1_12)",
+        target: "(((`name`!=:param_1_0_1_12) or isNull(name)))",
         params: {
           param_1_0_1_12: "张三",
         },
         dev: {
           expression: {
-            WHERE: "(`name`!=:param_1_0_1_12)",
+            WHERE: "(((`name`!=:param_1_0_1_12) or isNull(name)))",
           },
           fields: ["name"],
+          fieldCollection: [
+            {
+              field: "name",
+              fieldType: "",
+              operator: "!=",
+              operand: "张三",
+            },
+          ],
         },
       },
     });
@@ -225,6 +357,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(`age`>:param_1_0_1_8)",
           },
           fields: ["age"],
+          fieldCollection: [
+            {
+              field: "age",
+              fieldType: "",
+              operator: ">",
+              operand: "18",
+            },
+          ],
         },
       },
     });
@@ -244,6 +384,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(`age`>=:param_1_0_1_9)",
           },
           fields: ["age"],
+          fieldCollection: [
+            {
+              field: "age",
+              fieldType: "",
+              operator: ">=",
+              operand: "18",
+            },
+          ],
         },
       },
     });
@@ -263,6 +411,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(`age`<:param_1_0_1_8)",
           },
           fields: ["age"],
+          fieldCollection: [
+            {
+              field: "age",
+              fieldType: "",
+              operator: "<",
+              operand: "18",
+            },
+          ],
         },
       },
     });
@@ -282,6 +438,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(`age`<=:param_1_0_1_9)",
           },
           fields: ["age"],
+          fieldCollection: [
+            {
+              field: "age",
+              fieldType: "",
+              operator: "<=",
+              operand: "18",
+            },
+          ],
         },
       },
     });
@@ -301,6 +465,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(`name` IN (:param_1_0_1_20))",
           },
           fields: ["name"],
+          fieldCollection: [],
         },
       },
     });
@@ -320,6 +485,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(`name` NOT IN (:param_1_0_1_24))",
           },
           fields: ["name"],
+          fieldCollection: [],
         },
       },
     });
@@ -339,6 +505,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(`province` LIKE :param_1_0_1_18)",
           },
           fields: ["province"],
+          fieldCollection: [
+            {
+              field: "province",
+              fieldType: "",
+              operator: "like",
+              operand: "山%",
+            },
+          ],
         },
       },
     });
@@ -358,6 +532,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(`province` LIKE :param_1_0_1_18)",
           },
           fields: ["province"],
+          fieldCollection: [
+            {
+              field: "province",
+              fieldType: "",
+              operator: "like",
+              operand: "%东",
+            },
+          ],
         },
       },
     });
@@ -377,6 +559,14 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(`name` LIKE :param_1_0_1_18)",
           },
           fields: ["name"],
+          fieldCollection: [
+            {
+              field: "name",
+              fieldType: "",
+              operator: "like",
+              operand: "C_r_er",
+            },
+          ],
         },
       },
     });
@@ -394,6 +584,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(not empty(`name`))",
           },
           fields: ["name"],
+          fieldCollection: [],
         },
       },
     });
@@ -411,6 +602,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             WHERE: "(empty(`name`))",
           },
           fields: ["name"],
+          fieldCollection: [],
         },
       },
     });
@@ -422,7 +614,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
       result: {
         source: "a=1 && (b=1 AND (c=\"2\" OR c='3')) OR d!='2'",
         target:
-          "(`a`=:param_1_0_1_3 AND (`b`=:param_1_8_1_11 AND (`c`=:param_1_17_1_22 OR `c`=:param_1_26_1_31)) OR `d`!=:param_1_37_1_43)",
+          "(`a`=:param_1_0_1_3 AND (`b`=:param_1_8_1_11 AND (`c`=:param_1_17_1_22 OR `c`=:param_1_26_1_31)) OR ((`d`!=:param_1_37_1_43) or isNull(d)))",
         params: {
           param_1_0_1_3: "1",
           param_1_8_1_11: "1",
@@ -433,9 +625,41 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
         dev: {
           expression: {
             WHERE:
-              "(`a`=:param_1_0_1_3 AND (`b`=:param_1_8_1_11 AND (`c`=:param_1_17_1_22 OR `c`=:param_1_26_1_31)) OR `d`!=:param_1_37_1_43)",
+              "(`a`=:param_1_0_1_3 AND (`b`=:param_1_8_1_11 AND (`c`=:param_1_17_1_22 OR `c`=:param_1_26_1_31)) OR ((`d`!=:param_1_37_1_43) or isNull(d)))",
           },
           fields: ["a", "b", "c", "d"],
+          fieldCollection: [
+            {
+              field: "a",
+              fieldType: "",
+              operator: "=",
+              operand: "1",
+            },
+            {
+              field: "b",
+              fieldType: "",
+              operator: "=",
+              operand: "1",
+            },
+            {
+              field: "c",
+              fieldType: "",
+              operator: "=",
+              operand: "2",
+            },
+            {
+              field: "c",
+              fieldType: "",
+              operator: "=",
+              operand: "3",
+            },
+            {
+              field: "d",
+              fieldType: "",
+              operator: "!=",
+              operand: "2",
+            },
+          ],
         },
       },
     });
@@ -459,6 +683,20 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
               "(`a`=:param_1_0_1_3 AND `b` IN (:param_1_8_1_26) AND `c` LIKE :param_1_31_1_45)",
           },
           fields: ["a", "b", "c"],
+          fieldCollection: [
+            {
+              field: "a",
+              fieldType: "",
+              operator: "=",
+              operand: "1",
+            },
+            {
+              field: "c",
+              fieldType: "",
+              operator: "like",
+              operand: "%a_b%",
+            },
+          ],
         },
       },
     });
@@ -489,29 +727,31 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             },
           },
           fields: ["start_time"],
+          fieldCollection: [],
         },
       },
     });
   });
 
-  const spl24 = `| gentimes start_time start="2020-07-13T00:00:00+08" end="2020-07-13T23:59:59+08"`;
+  const spl24 = `| gentimes start_time start="2020-07-13T00:00:00+0800" end="2020-07-13T23:59:59+0800"`;
   test(spl24, () => {
     expect(
-      converter.parse(spl24, { json: true, hasAgingTime: false })
+      converter.parse(spl24, { json: true, hasAgingTime: true })
     ).toStrictEqual({
       result: {
         source:
-          '| gentimes start_time start="2020-07-13T00:00:00+08" end="2020-07-13T23:59:59+08"',
+          '| gentimes start_time start="2020-07-13T00:00:00+0800" end="2020-07-13T23:59:59+0800"',
         target:
-          "(`start_time`>= toDateTime64(:param_start_time, 9, 'UTC') AND `start_time` <= toDateTime64(:param_end_time, 9, 'UTC'))",
+          "( start_time >= toDateTime64(:param_aging_start_time, 9, 'UTC')  and start_time < toDateTime64(:param_end_time, 9, 'UTC')  and end_time >= toDateTime64(:param_start_time, 9, 'UTC') )",
         params: {
+          param_aging_start_time: "2020-07-12 14:00:00",
           param_start_time: "2020-07-12 16:00:00",
           param_end_time: "2020-07-13 15:59:59",
         },
         dev: {
           expression: {
             WHERE:
-              "(`start_time`>= toDateTime64(:param_start_time, 9, 'UTC') AND `start_time` <= toDateTime64(:param_end_time, 9, 'UTC'))",
+              "( start_time >= toDateTime64(:param_aging_start_time, 9, 'UTC')  and start_time < toDateTime64(:param_end_time, 9, 'UTC')  and end_time >= toDateTime64(:param_start_time, 9, 'UTC') )",
             GENTIMES: {
               time_field: "start_time",
               time_from: 1594569600000,
@@ -519,6 +759,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             },
           },
           fields: ["start_time"],
+          fieldCollection: [],
         },
       },
     });
@@ -527,20 +768,21 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
   const spl25 = `| gentimes start_time start=1594569600000 end=1594624363506`;
   test(spl25, () => {
     expect(
-      converter.parse(spl25, { json: true, hasAgingTime: false })
+      converter.parse(spl25, { json: true, hasAgingTime: true })
     ).toStrictEqual({
       result: {
         source: "| gentimes start_time start=1594569600000 end=1594624363506",
         target:
-          "(`start_time`>= toDateTime64(:param_start_time, 9, 'UTC') AND `start_time` <= toDateTime64(:param_end_time, 9, 'UTC'))",
+          "( start_time >= toDateTime64(:param_aging_start_time, 9, 'UTC')  and start_time < toDateTime64(:param_end_time, 9, 'UTC')  and end_time >= toDateTime64(:param_start_time, 9, 'UTC') )",
         params: {
+          param_aging_start_time: "2020-07-12 14:00:00",
           param_start_time: "2020-07-12 16:00:00",
           param_end_time: "2020-07-13 07:12:43",
         },
         dev: {
           expression: {
             WHERE:
-              "(`start_time`>= toDateTime64(:param_start_time, 9, 'UTC') AND `start_time` <= toDateTime64(:param_end_time, 9, 'UTC'))",
+              "( start_time >= toDateTime64(:param_aging_start_time, 9, 'UTC')  and start_time < toDateTime64(:param_end_time, 9, 'UTC')  and end_time >= toDateTime64(:param_start_time, 9, 'UTC') )",
             GENTIMES: {
               time_field: "start_time",
               time_from: 1594569600000,
@@ -548,6 +790,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             },
           },
           fields: ["start_time"],
+          fieldCollection: [],
         },
       },
     });
@@ -568,6 +811,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             ORDER_BY: "ORDER BY create_time DESC,age ASC",
           },
           fields: ["create_time", "age"],
+          fieldCollection: [],
         },
       },
     });
@@ -586,6 +830,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             LIMIT: "LIMIT 0,100",
           },
           fields: [],
+          fieldCollection: [],
         },
       },
     });
@@ -604,6 +849,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
             COLUMNS: "`name`,`age`",
           },
           fields: ["name", "age"],
+          fieldCollection: [],
         },
       },
     });
