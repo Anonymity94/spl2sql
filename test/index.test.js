@@ -66,7 +66,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
         source: "| search age=30",
         target: "(`age`=:param_1_9_1_15)",
         params: {
-          param_1_9_1_15: "30",
+          param_1_9_1_15: 30,
         },
         dev: {
           expression: {
@@ -78,7 +78,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
               field: "age",
               fieldType: "",
               operator: "=",
-              operand: "30",
+              operand: 30,
             },
           ],
         },
@@ -94,7 +94,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
         source: "source=sourceName | search age=30",
         target: "(`age`=:param_1_27_1_33)",
         params: {
-          param_1_27_1_33: "30",
+          param_1_27_1_33: 30,
         },
         dev: {
           expression: {
@@ -106,7 +106,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
               field: "age",
               fieldType: "",
               operator: "=",
-              operand: "30",
+              operand: 30,
             },
           ],
         },
@@ -350,7 +350,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
         source: "age > 18",
         target: "(`age`>:param_1_0_1_8)",
         params: {
-          param_1_0_1_8: "18",
+          param_1_0_1_8: 18,
         },
         dev: {
           expression: {
@@ -362,7 +362,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
               field: "age",
               fieldType: "",
               operator: ">",
-              operand: "18",
+              operand: 18,
             },
           ],
         },
@@ -377,7 +377,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
         source: "age >= 18",
         target: "(`age`>=:param_1_0_1_9)",
         params: {
-          param_1_0_1_9: "18",
+          param_1_0_1_9: 18,
         },
         dev: {
           expression: {
@@ -389,7 +389,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
               field: "age",
               fieldType: "",
               operator: ">=",
-              operand: "18",
+              operand: 18,
             },
           ],
         },
@@ -404,7 +404,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
         source: "age < 18",
         target: "(`age`<:param_1_0_1_8)",
         params: {
-          param_1_0_1_8: "18",
+          param_1_0_1_8: 18,
         },
         dev: {
           expression: {
@@ -416,7 +416,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
               field: "age",
               fieldType: "",
               operator: "<",
-              operand: "18",
+              operand: 18,
             },
           ],
         },
@@ -431,7 +431,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
         source: "age <= 18",
         target: "(`age`<=:param_1_0_1_9)",
         params: {
-          param_1_0_1_9: "18",
+          param_1_0_1_9: 18,
         },
         dev: {
           expression: {
@@ -443,7 +443,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
               field: "age",
               fieldType: "",
               operator: "<=",
-              operand: "18",
+              operand: 18,
             },
           ],
         },
@@ -616,8 +616,8 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
         target:
           "(`a`=:param_1_0_1_3 AND (`b`=:param_1_8_1_11 AND (`c`=:param_1_17_1_22 OR `c`=:param_1_26_1_31)) OR ((`d`!=:param_1_37_1_43) or isNull(d)))",
         params: {
-          param_1_0_1_3: "1",
-          param_1_8_1_11: "1",
+          param_1_0_1_3: 1,
+          param_1_8_1_11: 1,
           param_1_17_1_22: "2",
           param_1_26_1_31: "3",
           param_1_37_1_43: "2",
@@ -633,13 +633,13 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
               field: "a",
               fieldType: "",
               operator: "=",
-              operand: "1",
+              operand: 1,
             },
             {
               field: "b",
               fieldType: "",
               operator: "=",
-              operand: "1",
+              operand: 1,
             },
             {
               field: "c",
@@ -673,7 +673,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
         target:
           "(`a`=:param_1_0_1_3 AND `b` IN (:param_1_8_1_26) AND `c` LIKE :param_1_31_1_45)",
         params: {
-          param_1_0_1_3: "1",
+          param_1_0_1_3: 1,
           param_1_8_1_26: ["2", "3", "4"],
           param_1_31_1_45: "%%a_b%%",
         },
@@ -688,7 +688,7 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
               field: "a",
               fieldType: "",
               operator: "=",
-              operand: "1",
+              operand: 1,
             },
             {
               field: "c",
