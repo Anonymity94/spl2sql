@@ -854,4 +854,111 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
       },
     });
   });
+
+  const spl29 = `(from = "\\"test1@colasoft.com\\" <test1@colasoft.com>")`;
+  test(spl29, () => {
+    expect(converter.parse(spl29, { json: true })).toStrictEqual({
+      result: {
+        source: '(from = "\\"test1@colasoft.com\\" <test1@colasoft.com>")',
+        target: "((`from`=:param_1_1_1_53))",
+        params: {
+          param_1_1_1_53: '"test1@colasoft.com" <test1@colasoft.com>',
+        },
+        dev: {
+          expression: {
+            WHERE: "((`from`=:param_1_1_1_53))",
+          },
+          fields: ["from"],
+          fieldCollection: [
+            {
+              field: "from",
+              fieldType: "",
+              operator: "=",
+              operand: '"test1@colasoft.com" <test1@colasoft.com>',
+            },
+          ],
+        },
+      },
+    });
+  });
+
+  const spl30 = `(from = "\\'test1@colasoft.com\\' <test1@colasoft.com>")`;
+  test(spl30, () => {
+    expect(converter.parse(spl30, { json: true })).toStrictEqual({
+      result: {
+        source: "(from = \"\\'test1@colasoft.com\\' <test1@colasoft.com>\")",
+        target: "((`from`=:param_1_1_1_53))",
+        params: {
+          param_1_1_1_53: "'test1@colasoft.com' <test1@colasoft.com>",
+        },
+        dev: {
+          expression: {
+            WHERE: "((`from`=:param_1_1_1_53))",
+          },
+          fields: ["from"],
+          fieldCollection: [
+            {
+              field: "from",
+              fieldType: "",
+              operator: "=",
+              operand: "'test1@colasoft.com' <test1@colasoft.com>",
+            },
+          ],
+        },
+      },
+    });
+  });
+
+  const spl31 = `(from = '\"test1@colasoft.com\" <test1@colasoft.com>')`;
+  test(spl31, () => {
+    expect(converter.parse(spl31, { json: true })).toStrictEqual({
+      result: {
+        source: "(from = '\"test1@colasoft.com\" <test1@colasoft.com>')",
+        target: "((`from`=:param_1_1_1_51))",
+        params: {
+          param_1_1_1_51: '"test1@colasoft.com" <test1@colasoft.com>',
+        },
+        dev: {
+          expression: {
+            WHERE: "((`from`=:param_1_1_1_51))",
+          },
+          fields: ["from"],
+          fieldCollection: [
+            {
+              field: "from",
+              fieldType: "",
+              operator: "=",
+              operand: '"test1@colasoft.com" <test1@colasoft.com>',
+            },
+          ],
+        },
+      },
+    });
+  });
+  const spl32 = `(from = '\\'test1@colasoft.com\\' <test1@colasoft.com>')`;
+  test(spl32, () => {
+    expect(converter.parse(spl32, { json: true })).toStrictEqual({
+      result: {
+        source: "(from = '\\'test1@colasoft.com\\' <test1@colasoft.com>')",
+        target: "((`from`=:param_1_1_1_53))",
+        params: {
+          param_1_1_1_53: "'test1@colasoft.com' <test1@colasoft.com>",
+        },
+        dev: {
+          expression: {
+            WHERE: "((`from`=:param_1_1_1_53))",
+          },
+          fields: ["from"],
+          fieldCollection: [
+            {
+              field: "from",
+              fieldType: "",
+              operator: "=",
+              operand: "'test1@colasoft.com' <test1@colasoft.com>",
+            },
+          ],
+        },
+      },
+    });
+  });
 });
