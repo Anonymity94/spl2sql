@@ -961,4 +961,27 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
       },
     });
   });
+  const spl33 = `link_state_ipv4_address<Array> = "172.30.25.64/26,172.30.16.0/27"`;
+  test(spl33, () => {
+    expect(converter.parse(spl33, { json: true })).toStrictEqual({
+      result: {
+        source:
+          'link_state_ipv4_address<Array> = "172.30.25.64/26,172.30.16.0/27"',
+        target:
+          "( hasAll(link_state_ipv4_address, [:param_1_0_1_65_0,:param_1_0_1_65_1 ])=1)",
+        params: {
+          param_1_0_1_65_0: "172.30.25.64/26",
+          param_1_0_1_65_1: "172.30.16.0/27",
+        },
+        dev: {
+          expression: {
+            WHERE:
+              "( hasAll(link_state_ipv4_address, [:param_1_0_1_65_0,:param_1_0_1_65_1 ])=1)",
+          },
+          fields: ["link_state_ipv4_address<Array>"],
+          fieldCollection: [],
+        },
+      },
+    });
+  });
 });
