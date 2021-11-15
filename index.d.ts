@@ -5,22 +5,31 @@ declare namespace SplToSqlConverter {
   interface IParseOptions {
     /**
      * 结果是否返回json
-     *
-     * 默认为 false
+     * @default false
      */
     json?: boolean;
     /**
      * 是否根据开始时间推算流的老化时间
-     * 默认为 true
+     * @default true
      */
     hasAgingTime?: boolean;
     /**
      * 时间精度
-     * 默认为9
      * @value 3（毫秒）
      * @value 9（纳秒）
+     * @default 9
      */
-    timePrecision: 3 | 9;
+    timePrecision?: 3 | 9;
+    /** 
+     * 是否包含开始时间
+     * @default true
+     */
+    includeStartTime?: boolean;
+    /** 
+     * 是否包含结束时间
+     * @default true
+     */
+    includeEndTime?: boolean;
   }
   interface IParseResult {
     result: {
@@ -75,12 +84,12 @@ declare namespace SplToSqlConverter {
         fieldCollection: {
           field: string;
           fieldType:
-            | "IPv4"
-            | "IPv6"
-            | "CIDR_IPv4"
-            | "CIDR_IPv6"
-            | "Array<IPv4>"
-            | "Array<IPv6>";
+          | "IPv4"
+          | "IPv6"
+          | "CIDR_IPv4"
+          | "CIDR_IPv6"
+          | "Array<IPv4>"
+          | "Array<IPv6>";
           operator: "like" | "not_like" | "=" | "!=" | ">" | ">=" | "<" | "<=";
           operand: string | number;
         }[];
