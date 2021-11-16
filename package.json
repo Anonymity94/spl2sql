@@ -1,0 +1,38 @@
+{
+  "name": "spl2sql",
+  "description": "Convert Splunk SPL to ClickHouse SQL with pegjs",
+  "version": "0.0.3",
+  "main": "dist/spl2sql.js",
+  "types": "index.d.ts",
+  "repository": "git@github.com:Anonymity94/splunk-to-sql.git",
+  "author": "Anonymity94 <1176989591@qq.com>",
+  "keywords": [
+    "pegjs",
+    "splunk",
+    "parser",
+    "sql"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build:peg": "node_modules/pegjs/bin/pegjs --format commonjs -o lib/converter.js lib/splunk.pegjs",
+    "build": "npm run build:peg && rollup -c",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "pretest": "npm run build:peg && npm run build"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "jest": "^27.3.1",
+    "pegjs": "^0.10.0",
+    "rollup": "^2.60.0",
+    "rollup-plugin-clear": "^2.0.7",
+    "rollup-plugin-uglify": "^6.0.4"
+  },
+  "files": [
+    "dist",
+    "index.d.ts"
+  ]
+}
