@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const converter = require("../index");
+const converter = require("../dist/spl2sql");
 
 describe("Splunk SPL to ClickHouse SQL test", () => {
   const spl0 = `ipv4_initiator<IPv4> = '1.1.1.1' AND (province = '北京' OR province = '山东') | gentimes start_time start="2020-07-13T00:00:00+08" end="2020-07-13T23:59:59+08" | head 1000 | sort -start_time`;

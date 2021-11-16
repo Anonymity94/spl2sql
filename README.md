@@ -6,8 +6,8 @@
 
 ## 使用
 
-```js
-const converter = require("../lib/converter");
+```ts
+import converter from "spl2sql";
 
 try {
   const result = converter.parse(`| search a=1 and b=2`, {
@@ -20,7 +20,7 @@ try {
 ```
 
 ```html
-<script src="../lib/converter.min.js"></script>
+<script src="../dist/spl2sql.js"></script>
 
 <script>
   try {
