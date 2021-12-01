@@ -961,9 +961,35 @@ describe("Splunk SPL to ClickHouse SQL test", () => {
       },
     });
   });
-  const spl33 = `link_state_ipv4_address<Array> = "172.30.25.64/26,172.30.16.0/27"`;
+  const spl33 = `from like '\\'test1@colasoft.com\\' <test1@colasoft.com>'`;
   test(spl33, () => {
     expect(converter.parse(spl33, { json: true })).toStrictEqual({
+      result: {
+        source: "from like '\\'test1@colasoft.com\\' <test1@colasoft.com>'",
+        target: "(`from` LIKE :param_1_0_1_55)",
+        params: {
+          param_1_0_1_55: "%'test1@colasoft.com' <test1@colasoft.com>%",
+        },
+        dev: {
+          expression: {
+            WHERE: "(`from` LIKE :param_1_0_1_55)",
+          },
+          fields: ["from"],
+          fieldCollection: [
+            {
+              field: "from",
+              fieldType: "",
+              operator: "like",
+              operand: "'test1@colasoft.com' <test1@colasoft.com>",
+            },
+          ],
+        },
+      },
+    });
+  });
+  const spl34 = `link_state_ipv4_address<Array> = "172.30.25.64/26,172.30.16.0/27"`;
+  test(spl34, () => {
+    expect(converter.parse(spl34, { json: true })).toStrictEqual({
       result: {
         source:
           'link_state_ipv4_address<Array> = "172.30.25.64/26,172.30.16.0/27"',
