@@ -62,7 +62,7 @@ ipv4_initiator<IPv4> = '1.1.1.1' AND (province = '北京' OR province = '山东'
 
 ## 语法说明
 
-```JSON
+```
 # 搜索表名，可以省略
 [source <tableName>]
 # 搜索字段
@@ -102,7 +102,7 @@ ipv4_initiator<IPv4> = '1.1.1.1' AND (province = '北京' OR province = '山东'
 
 > [toIPv4(string)](https://clickhouse.tech/docs/en/sql-reference/functions/ip-address-functions/#toipv4string)
 
-```json
+```
 ipv4_field<IPv4> = 1.1.1.1
 ```
 
@@ -110,7 +110,7 @@ ipv4_field<IPv4> = 1.1.1.1
 
 > [ipv4cidrtorangeipv4-cidr](https://clickhouse.tech/docs/en/sql-reference/functions/ip-address-functions/#ipv4cidrtorangeipv4-cidr)
 
-```json
+```
 ipv4_cidr_field<IPv4> = 1.1.1.1/10
 ```
 
@@ -118,7 +118,7 @@ ipv4_cidr_field<IPv4> = 1.1.1.1/10
 
 > [toIPv6(string)](https://clickhouse.tech/docs/en/sql-reference/functions/ip-address-functions/#toipv6string)
 
-```json
+```
 ipv6_field<IPv6> = 8090::4
 ```
 
@@ -126,7 +126,7 @@ ipv6_field<IPv6> = 8090::4
 
 > [ipv4cidrtorangeipv4-cidr](https://clickhouse.tech/docs/en/sql-reference/functions/ip-address-functions/#ipv4cidrtorangeipv4-cidr)
 
-```json
+```
 ipv6_cidr_field<IPv6> = 8090::4/10
 ```
 
@@ -134,19 +134,19 @@ ipv6_cidr_field<IPv6> = 8090::4/10
 
 > [has(arr, elem)](https://clickhouse.tech/docs/en/sql-reference/functions/array-functions/#hasarr-elem)
 
-```json
+```
 array_fieid<Array> = '测试'
 ```
 
 ### Array<IPv4>
 
-```json
+```
 ipv4_array_fieid<Array<IPv4>> = '1.1.1.1'
 ```
 
 ### Array<IPv6>
 
-```json
+```
 ipv6_array_fieid<Array<IPv6>> = '8090::4'
 ```
 
@@ -158,7 +158,7 @@ ipv6_array_fieid<Array<IPv6>> = '8090::4'
 
 #### 操作符 `=`
 
-```json
+```
 # 含义：字段a 等于 1.2.3.4
 | search a = 1.2.3.4
 # 等价于
@@ -168,35 +168,35 @@ ipv6_array_fieid<Array<IPv6>> = '8090::4'
 
 #### 操作符 `!=`
 
-```json
+```
 # 含义：字段 name 不等于 张三
 name != '张三'
 ```
 
 #### 操作符 `>`
 
-```json
+```
 # 含义：字段 age 大于 18
 age > 18
 ```
 
 #### 操作符 `>=`
 
-```json
+```
 # 含义：字段 age 大于等于 18
 c >= 18
 ```
 
 #### 操作符 `<`
 
-```json
+```
 # 含义：字段 age 小于 18
 age < 18
 ```
 
 #### 操作符 `<=`
 
-```json
+```
 # 含义：字段 age 小于等于 18
 age <= 18
 ```
@@ -205,7 +205,7 @@ age <= 18
 
 可用于搜索多个值
 
-```json
+```
 # 含义：字段name=张三 或者 name=李四
 name IN ("张三", "李四")
 
@@ -217,7 +217,7 @@ name = "张三" OR name = "李四"
 
 可用于排除多个值
 
-```json
+```
 # 含义：字段name!=张三 并且 name!=李四
 name NOT IN ("张三", "李四")
 
@@ -231,7 +231,7 @@ name != "张三" AND name != "李四"
 
 ① `％` 表示零个或任意多个字符
 
-```json
+```
 # 以"山"开头的省份，例如：山东、山西
 province LIKE "山%"
 
@@ -244,7 +244,7 @@ name LIKE "%马%"
 
 ② `_` 任意单个字符、匹配单个任意字符
 
-```json
+```
 # 以 "C" 开头，然后是一个任意字符，然后是 "r，然后是任意字符，然后是 "er"：
 name LIKE "C_r_er"
 ```
@@ -261,7 +261,7 @@ name LIKE "C_r_er"
 
 排除 `''` 或 `NULL` 或 `[]` ，其他的都会被命中。
 
-```json
+```
 # name 字段不为空
 name EXISTS
 ```
@@ -274,7 +274,7 @@ name EXISTS
 
 搜索不存在值的字段，字段值为 `''` 或 `NULL` 或 `[]` 时会被命中。
 
-```json
+```
 # name 不存在值
 name NOT_EXISTS
 ```
